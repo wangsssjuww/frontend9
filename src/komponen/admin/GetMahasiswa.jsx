@@ -1,10 +1,27 @@
 import { useEffect, useState } from "react";
 import apis from "../../../api/mahasiswa";
+import UpdateMahasiswa from "./UpdateMahasiswa";
 
 const GetMahasiswa = () => {
     const [mahasiswa, setMahasiswa] = useState([]);
     const [error, setError] = useState(null);
     const[nim, setNim] = useState('');
+    const[_nim,  set_Nim] = useState('')
+    const[mhs, setMhs] = useState({})
+    const[isDelete, setIsDelete] = useState(false);
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const openModal = (data) => {
+        console.log(data);
+        setMhs({...mhs, ...data })
+        console.log(mhs);
+        setIsModalOpen(true)
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -20,12 +37,21 @@ const GetMahasiswa = () => {
             }
         };
         fetchData();
-    }, [nim]);
+    }, [nim, isModalOpen, isDelete]);
 
     if (error) {
         return <div>Error : {error}</div>
 
     }
+
+    const handleDelete = async (nim) => {
+        try {
+            await apis.DeleteMahasiswa(nim);
+            setIsDelete(!isDelete);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     return ( 
         <>
@@ -62,6 +88,9 @@ const GetMahasiswa = () => {
                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                             PRODI
                         </th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                            ACTION
+                        </th>
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -71,10 +100,19 @@ const GetMahasiswa = () => {
                             <td className="px-6 py-4 font-sm whitespace-nowrap">{mhs.nama}</td>
                             <td className="px-6 py-4 font-sm whitespace-nowrap">{mhs.angkatan}</td>
                             <td className="px-6 py-4 font-sm whitespace-nowrap">{mhs.prodi}</td>
+                            <td className="px-6 py-4 font-sm whitespace-nowrap">
+                                <div className="flex flex-row justify-start">
+                                <button className="text-slate-800 underline cursor-pointer hover:text-blue-800"
+                                        onClick={() => { openModal(mhs) }}>Edit</button>
+                                <button className="text-white text-md bg-red-700 py-1 px-2 cursor-pointer hover:bg-red-900 ml-4"
+                                        onClick={() => { handleDelete(mhs.nim )}}>Hapus</button>
+                                </div>
+                            </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
+            <UpdateMahasiswa isOpen={isModalOpen} onClose={closeModal} mhs={mhs} />
         </>
      );
 }

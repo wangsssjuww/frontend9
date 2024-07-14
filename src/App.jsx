@@ -10,6 +10,7 @@ import Animasi from './Pages/timer';
 import FetchApi from './Pages/fetch';
 import ReactContext from './Pages/reactcontext';
 import GetMahasiswa from './komponen/admin/GetMahasiswa';
+import CreateMahasiswa from './komponen/admin/CreateMahasiswa';
 
 
 
@@ -26,6 +27,7 @@ function App () {
         <Route path="/fetch" Component={FetchApi}/>
         <Route path="/react" Component={ReactContext}/>
         <Route path="/mhss" Component={GetMahasiswa}/>
+        <Route path="/insert" Component={CreateMahasiswa}/>
       </Routes>
     </>
   )
